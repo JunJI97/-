@@ -1,7 +1,7 @@
 def solution(clothes):
     answer = 1
-    
     clothes_dict = {}
+    
     # dict으로 정리
     for i in range(len(clothes)):
         key = clothes[i][1] # 옷의 분류
