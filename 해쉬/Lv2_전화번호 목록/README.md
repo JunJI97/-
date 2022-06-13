@@ -1,108 +1,78 @@
-[문제링크](https://programmers.co.kr/learn/courses/30/lessons/42578)
+[문제링크](https://programmers.co.kr/learn/courses/30/lessons/42577)
 
 # 문제 설명
 
-스파이들은 매일 다른 옷을 조합하여 입어 자신을 위장합니다.
+전화번호부에 적힌 전화번호 중, 한 번호가 다른 번호의 접두어인 경우가 있는지 확인하려 합니다.
+전화번호가 다음과 같을 경우, 구조대 전화번호는 영석이의 전화번호의 접두사입니다.
 
-예를 들어 스파이가 가진 옷이 아래와 같고 오늘 스파이가 동그란 안경, 긴 코트, 파란색 티셔츠를 입었다면 다음날은 청바지를 추가로 입거나 동그란 안경 대신 검정 선글라스를 착용하거나 해야 합니다.
-
-종류 |이름
----|---|
-얼굴 | 동그란 안경, 검정 선글라스
-상의 |	파란색 티셔츠
-하의 |	청바지
-겉옷 | 긴 코트
-
-스파이가 가진 의상들이 담긴 2차원 배열 clothes가 주어질 때 서로 다른 옷의 조합의 수를 return 하도록 solution 함수를 작성해주세요.
+ * 구조대 : 119
+ * 박준영 : 97 674 223
+ * 지영석 : 11 9552 4421
+ 
+전화번호부에 적힌 전화번호를 담은 배열 phone_book 이 solution 함수의 매개변수로 주어질 때, 어떤 번호가 다른 번호의 접두어인 경우가 있으면 false를 그렇지 않으면 true를 return 하도록 solution 함수를 작성해주세요.
 
 
 
 **제한사항**
 ---------
 
-* clothes의 각 행은 [의상의 이름, 의상의 종류]로 이루어져 있습니다.
-* 스파이가 가진 의상의 수는 1개 이상 30개 이하입니다.
-* 같은 이름을 가진 의상은 존재하지 않습니다.
-* clothes의 모든 원소는 문자열로 이루어져 있습니다.
-* 모든 문자열의 길이는 1 이상 20 이하인 자연수이고 알파벳 소문자 또는 '_' 로만 이루어져 있습니다.
-* 스파이는 하루에 최소 한 개의 의상은 입습니다.
+ * phone_book의 길이는 1 이상 1,000,000 이하입니다.
+ * 각 전화번호의 길이는 1 이상 20 이하입니다.
+ * 같은 전화번호가 중복해서 들어있지 않습니다.
 
 
 
 **입출력 예**
 -------------
-clothes	| return
+phone_book	| return
 ---|---
-[["yellowhat", "headgear"], ["bluesunglasses", "eyewear"], ["green_turban", "headgear"]]	| 5
-[["crowmask", "face"], ["bluesunglasses", "face"], ["smoky_makeup", "face"]] | 3
+["119", "97674223", "1195524421"] | false
+["123","456","789"]	| true
+["12","123","1235","567","88"]	| false
 
 
 
 
 **입출력 예 설명**
 --------------
+입출력 예 #1
 
-예제 #1
+앞에서 설명한 예와 같습니다.
 
-headgear에 해당하는 의상이 yellow_hat, green_turban이고 eyewear에 해당하는 의상이 blue_sunglasses이므로 아래와 같이 5개의 조합이 가능합니다.
+입출력 예 #2
 
-    1. yellow_hat
-    2. blue_sunglasses
-    3. green_turban
-    4. yellow_hat + blue_sunglasses
-    5. green_turban + blue_sunglasses 
+한 번호가 다른 번호의 접두사인 경우가 없으므로, 답은 true입니다.
 
-예제 #2
+입출력 예 #3
 
-face에 해당하는 의상이 crow_mask, blue_sunglasses, smoky_makeup이므로 아래와 같이 3개의 조합이 가능합니다.
+첫 번째 전화번호, “12”가 두 번째 전화번호 “123”의 접두사입니다. 따라서 답은 false입니다.
 
-    1. crow_mask
-    2. blue_sunglasses
-    3. smoky_makeup
 
 
 # 풀이
 ```python
-def solution(clothes):
-    answer = 1
-    
-    clothes_dict = {}
-    # dict으로 정리
-    for i in range(len(clothes)):
-        key = clothes[i][1] # 옷의 분류
-        value = clothes[i][0] # 명칭
-        if(key in clothes_dict): 
-            clothes_dict[key] += 1
-        else:
-            clothes_dict[key] = 1
-    
-    print(clothes_dict)
-    
-    # (종류1 개수 + 1) * (종류2 개수 + 1) * .... -1 = 답
-    for key, value in clothes_dict.items():
-        answer *= (value+1)
-    
-    return answer-1
+def solution(phone_book):
+    phone_book.sort() # 정렬
+    for i in range(len(phone_book)-1): # -1 하는 이유는 아래 조건문 때문 (범위 이탈 방지)
+        if(phone_book[i] == phone_book[i+1][0:len(phone_book[i])]): # 정렬 후 바로 옆 문자열끼리만 비교 하면 됨
+            return False
+    return True 
 ```
         
- dict 형태로 입력값을 정리하고 경우의 수를 최종적으로 계산하면 되는 간단한 문제
+문제에서 의도한 바는 해시, 그러나 문제를 읽었을 땐 직관적으로 해시를 떠올릴 문제는 아니였던 것 같다.
+주어진 문자열을 정렬하면 오름차순이든 내림차순이든 같은 접두사를 가진 전화번호끼리는 이웃할 수 밖에 없다.
 
-**dict으로 정리한 결과**
-![image](https://user-images.githubusercontent.com/102650903/173249799-ca1b1bee-7297-4752-aadf-5ec90b2d34a4.png)
+이런 특징을 찾아낸다면 쉽게 풀 수 있는 문제, 난이도는 레벨1 수준인 것 같다.
 
-**계산식**
 
-(종류1 개수 + 1) * (종류2 개수 + 1) * .... -1 = 답
-
-1. 1을 더하고 곱하는 이유 : 해당 부위의 옷을 착용안하는 경우도 있기때문
-2. 마지막에 1 빼는 이유 : 옷을 전혀 입지 않은 경우를 배제함
-
-**새로 배운 내용**
+**시간 복잡도**
 ------------------------
 
-for key, value in clothes_dict.items():
+해당 풀이는 정렬<O(NlogN)> 후 for문을 1회<O(N)> 돌기 때문에 이론상으로는
+O(NlogN) 시간복잡도를 가진다고 할 수 있다.
 
-.items()를 사용하여 딕셔너리에 있는 key,value값 모두 접근가능!
+그러나 2중 for문 <O(N*N)>으로 단순풀이한 결과가 더 빠르다는 의견이 있었다.
+이러한 의견이 나온 이유는 테스트 케이스에서 주어진 데이터의 크기가 작아서 생긴 문제일 뿐, 정렬을 거친 후 진행하는 것이 더 나은듯 하다. 
 
  
  
