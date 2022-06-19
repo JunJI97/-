@@ -1,108 +1,98 @@
-[문제링크](https://programmers.co.kr/learn/courses/30/lessons/42578)
+[문제링크](https://programmers.co.kr/learn/courses/30/lessons/42626)
 
 # 문제 설명
 
-스파이들은 매일 다른 옷을 조합하여 입어 자신을 위장합니다.
+매운 것을 좋아하는 Leo는 모든 음식의 스코빌 지수를 K 이상으로 만들고 싶습니다. 모든 음식의 스코빌 지수를 K 이상으로 만들기 위해 Leo는 스코빌 지수가 가장 낮은 두 개의 음식을 아래와 같이 특별한 방법으로 섞어 새로운 음식을 만듭니다.
 
-예를 들어 스파이가 가진 옷이 아래와 같고 오늘 스파이가 동그란 안경, 긴 코트, 파란색 티셔츠를 입었다면 다음날은 청바지를 추가로 입거나 동그란 안경 대신 검정 선글라스를 착용하거나 해야 합니다.
+ * 섞은 음식의 스코빌 지수 = 가장 맵지 않은 음식의 스코빌 지수 + (두 번째로 맵지 않은 음식의 스코빌 지수 * 2)
 
-종류 |이름
----|---|
-얼굴 | 동그란 안경, 검정 선글라스
-상의 |	파란색 티셔츠
-하의 |	청바지
-겉옷 | 긴 코트
-
-스파이가 가진 의상들이 담긴 2차원 배열 clothes가 주어질 때 서로 다른 옷의 조합의 수를 return 하도록 solution 함수를 작성해주세요.
-
+Leo는 모든 음식의 스코빌 지수가 K 이상이 될 때까지 반복하여 섞습니다.
+Leo가 가진 음식의 스코빌 지수를 담은 배열 scoville과 원하는 스코빌 지수 K가 주어질 때, 모든 음식의 스코빌 지수를 K 이상으로 만들기 위해 섞어야 하는 최소 횟수를 return 하도록 solution 함수를 작성해주세요.
 
 
 **제한사항**
 ---------
 
-* clothes의 각 행은 [의상의 이름, 의상의 종류]로 이루어져 있습니다.
-* 스파이가 가진 의상의 수는 1개 이상 30개 이하입니다.
-* 같은 이름을 가진 의상은 존재하지 않습니다.
-* clothes의 모든 원소는 문자열로 이루어져 있습니다.
-* 모든 문자열의 길이는 1 이상 20 이하인 자연수이고 알파벳 소문자 또는 '_' 로만 이루어져 있습니다.
-* 스파이는 하루에 최소 한 개의 의상은 입습니다.
+ * scoville의 길이는 2 이상 1,000,000 이하입니다.
+ * K는 0 이상 1,000,000,000 이하입니다.
+ * scoville의 원소는 각각 0 이상 1,000,000 이하입니다.
+ * 모든 음식의 스코빌 지수를 K 이상으로 만들 수 없는 경우에는 -1을 return 합니다.
 
 
 
 **입출력 예**
 -------------
-clothes	| return
----|---
-[["yellowhat", "headgear"], ["bluesunglasses", "eyewear"], ["green_turban", "headgear"]]	| 5
-[["crowmask", "face"], ["bluesunglasses", "face"], ["smoky_makeup", "face"]] | 3
-
-
+scoville	| K	| return
+---|---|---
+[1, 2, 3, 9, 10, 12]	| 7	| 2
 
 
 **입출력 예 설명**
 --------------
 
-예제 #1
+1. 스코빌 지수가 1인 음식과 2인 음식을 섞으면 음식의 스코빌 지수가 아래와 같이 됩니다.
+새로운 음식의 스코빌 지수 = 1 + (2 * 2) = 5
+가진 음식의 스코빌 지수 = [5, 3, 9, 10, 12]
 
-headgear에 해당하는 의상이 yellow_hat, green_turban이고 eyewear에 해당하는 의상이 blue_sunglasses이므로 아래와 같이 5개의 조합이 가능합니다.
+2. 스코빌 지수가 3인 음식과 5인 음식을 섞으면 음식의 스코빌 지수가 아래와 같이 됩니다.
+새로운 음식의 스코빌 지수 = 3 + (5 * 2) = 13
+가진 음식의 스코빌 지수 = [13, 9, 10, 12]
 
-    1. yellow_hat
-    2. blue_sunglasses
-    3. green_turban
-    4. yellow_hat + blue_sunglasses
-    5. green_turban + blue_sunglasses 
-
-예제 #2
-
-face에 해당하는 의상이 crow_mask, blue_sunglasses, smoky_makeup이므로 아래와 같이 3개의 조합이 가능합니다.
-
-    1. crow_mask
-    2. blue_sunglasses
-    3. smoky_makeup
+모든 음식의 스코빌 지수가 7 이상이 되었고 이때 섞은 횟수는 2회입니다.
 
 
 # 풀이
 ```python
-def solution(clothes):
-    answer = 1
+import heapq
+def solution(scoville, K):
+    answer = 0
+    heapq.heapify(scoville) # 주어진 list를 heap으로 변환
     
-    clothes_dict = {}
-    # dict으로 정리
-    for i in range(len(clothes)):
-        key = clothes[i][1] # 옷의 분류
-        value = clothes[i][0] # 명칭
-        if(key in clothes_dict): 
-            clothes_dict[key] += 1
-        else:
-            clothes_dict[key] = 1
-    
-    print(clothes_dict)
-    
-    # (종류1 개수 + 1) * (종류2 개수 + 1) * .... -1 = 답
-    for key, value in clothes_dict.items():
-        answer *= (value+1)
-    
-    return answer-1
-```
+    while(scoville[0] < K): # 가장 낮은 스코빌 지수가 K 이상이 될 때 까지 반복
+        if(len(scoville) >= 2):
+            first = heapq.heappop(scoville) # 가장 작은 스코빌 pop
+            second = heapq.heappop(scoville) # 그 다음 작은 스코빌 pop
+            mix = first + (second * 2) # 섞은 음식의 스코빌
+            heapq.heappush(scoville, mix) # heap에 push
+            answer += 1
+        else: 
+            return -1
         
- dict 형태로 입력값을 정리하고 경우의 수를 최종적으로 계산하면 되는 간단한 문제
+    
+    return answer
+```
 
-**dict으로 정리한 결과**
-![image](https://user-images.githubusercontent.com/102650903/173249799-ca1b1bee-7297-4752-aadf-5ec90b2d34a4.png)
+최대값, 최소값을 찾는데 매우 효율적인 Heap 알고리즘을 이용하면 쉽게 풀 수 있는 문제입니다.
 
-**계산식**
 
-(종류1 개수 + 1) * (종류2 개수 + 1) * .... -1 = 답
+**heapq 모듈 사용법**
+----
+import heapq
+ * heapq.heappush(heap, A) : 값 A를 heap에 추가한다.
+ * heapq.heappop(heap) : heap에서 가장 작은(왼쪽) 원소를 pop 
+ * heapq.heapify(list) : 리스트를 heap으로 변환한다. <O(N)>
 
-1. 1을 더하고 곱하는 이유 : 해당 부위의 옷을 착용안하는 경우도 있기때문
-2. 마지막에 1 빼는 이유 : 옷을 전혀 입지 않은 경우를 배제함
 
-**새로 배운 내용**
-------------------------
+**더 높은 효율의 풀이**
+----
+다른 사람의 의견 중 heap보다 더 효율적인 인상적인 풀이가 있었다.
+ 
+그것은 오직 queue만 사용하여 mix된 음식을 별도의 queue를 생성해서 따로 담는 것이다.
 
-for key, value in clothes_dict.items():
+어차피 오름차순으로 정렬되어 있기에 별도의 queue에도 크기 순서대로 쌓일 수 밖에 없다.
 
-.items()를 사용하여 딕셔너리에 있는 key,value값 모두 접근가능!
+이 특징을 이용해 풀면 heapq 모듈을 사용한 속도보다 두 배정도 빠르게 나온다고 한다...
+
+
+**느낀점**
+----
+사실 Heap 자료구조는 학교에서 배워 대강 알고는 있었으나, 직접 적용해보지 않아 코딩테스트에서는 이용하지 못했었다.
+
+그래서 이번기회에 Heap 자료구조를 다시 공부하고 문제를 풀어 보았는데, 생각보다 매우 단순해서 이걸 왜 이제 공부했나.. 후회감이 든다.
+
+그간 응시했던 코딩테스트에서 비슷한 유형의 문제를 몇 번 마주한 적이 있었는데, 빈출도가 높은 유형이니 이번 기회에 내 것으로 만들어야 겠다.
+
+
 
  
  
