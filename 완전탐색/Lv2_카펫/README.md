@@ -1,110 +1,89 @@
-[문제링크](https://programmers.co.kr/learn/courses/30/lessons/42578)
+[문제링크](https://programmers.co.kr/learn/courses/30/lessons/42842)
 
 # 문제 설명
 
-스파이들은 매일 다른 옷을 조합하여 입어 자신을 위장합니다.
+Leo는 카펫을 사러 갔다가 아래 그림과 같이 중앙에는 노란색으로 칠해져 있고 테두리 1줄은 갈색으로 칠해져 있는 격자 모양 카펫을 봤습니다.
 
-예를 들어 스파이가 가진 옷이 아래와 같고 오늘 스파이가 동그란 안경, 긴 코트, 파란색 티셔츠를 입었다면 다음날은 청바지를 추가로 입거나 동그란 안경 대신 검정 선글라스를 착용하거나 해야 합니다.
+![image](https://user-images.githubusercontent.com/102650903/174382317-49d447a0-f140-4c47-b347-f7171b52632d.png)
 
-종류 |이름
----|---|
-얼굴 | 동그란 안경, 검정 선글라스
-상의 |	파란색 티셔츠
-하의 |	청바지
-겉옷 | 긴 코트
+Leo는 집으로 돌아와서 아까 본 카펫의 노란색과 갈색으로 색칠된 격자의 개수는 기억했지만, 전체 카펫의 크기는 기억하지 못했습니다.
 
-스파이가 가진 의상들이 담긴 2차원 배열 clothes가 주어질 때 서로 다른 옷의 조합의 수를 return 하도록 solution 함수를 작성해주세요.
-
+Leo가 본 카펫에서 갈색 격자의 수 brown, 노란색 격자의 수 yellow가 매개변수로 주어질 때 카펫의 가로, 세로 크기를 순서대로 배열에 담아 return 하도록 solution 함수를 작성해주세요.
 
 
 **제한사항**
 ---------
 
-* clothes의 각 행은 [의상의 이름, 의상의 종류]로 이루어져 있습니다.
-* 스파이가 가진 의상의 수는 1개 이상 30개 이하입니다.
-* 같은 이름을 가진 의상은 존재하지 않습니다.
-* clothes의 모든 원소는 문자열로 이루어져 있습니다.
-* 모든 문자열의 길이는 1 이상 20 이하인 자연수이고 알파벳 소문자 또는 '_' 로만 이루어져 있습니다.
-* 스파이는 하루에 최소 한 개의 의상은 입습니다.
+* 갈색 격자의 수 brown은 8 이상 5,000 이하인 자연수입니다.
+* 노란색 격자의 수 yellow는 1 이상 2,000,000 이하인 자연수입니다.
+* 카펫의 가로 길이는 세로 길이와 같거나, 세로 길이보다 깁니다.
 
 
 
 **입출력 예**
 -------------
-clothes	| return
----|---
-[["yellowhat", "headgear"], ["bluesunglasses", "eyewear"], ["green_turban", "headgear"]]	| 5
-[["crowmask", "face"], ["bluesunglasses", "face"], ["smoky_makeup", "face"]] | 3
+brown |	yellow	| return
+---|---|---
+10	| 2	|	[4, 3]
+8	|	1	|	[3, 3]
+24	|	24	|	[8, 6]
 
-
-
-
-**입출력 예 설명**
---------------
-
-예제 #1
-
-headgear에 해당하는 의상이 yellow_hat, green_turban이고 eyewear에 해당하는 의상이 blue_sunglasses이므로 아래와 같이 5개의 조합이 가능합니다.
-
-    1. yellow_hat
-    2. blue_sunglasses
-    3. green_turban
-    4. yellow_hat + blue_sunglasses
-    5. green_turban + blue_sunglasses 
-
-예제 #2
-
-face에 해당하는 의상이 crow_mask, blue_sunglasses, smoky_makeup이므로 아래와 같이 3개의 조합이 가능합니다.
-
-    1. crow_mask
-    2. blue_sunglasses
-    3. smoky_makeup
 
 
 # 풀이
 ```python
-def solution(clothes):
-    answer = 1
-    
-    clothes_dict = {}
-    # dict으로 정리
-    for i in range(len(clothes)):
-        key = clothes[i][1] # 옷의 분류
-        value = clothes[i][0] # 명칭
-        if(key in clothes_dict): 
-            clothes_dict[key] += 1
+def solution(brown, yellow):
+    for line in range(1, yellow+1): # yellow의 line 수
+        w = yellow / line # yello 가로 길이
+        if(w - int(w)) == 0.0: # yellow 타일이 여러 라인을 가질 수 있는 경우
+            w = int(w)
+            pre_brown = (w + 2)*2 + (line * 2) # 예상 brown 타일 수 계산
+            if (pre_brown == brown): # 예상한 bronw 타일 수가 주어진 값과 일치할 때
+                return [w+2, line+2]
         else:
-            clothes_dict[key] = 1
-    
-    print(clothes_dict)
-    
-    # (종류1 개수 + 1) * (종류2 개수 + 1) * .... -1 = 답
-    for key, value in clothes_dict.items():
-        answer *= (value+1)
-    
-    return answer-1
+            pass
+    return -1
 ```
-        
- dict 형태로 입력값을 정리하고 경우의 수를 최종적으로 계산하면 되는 간단한 문제
 
-**dict으로 정리한 결과**
-![image](https://user-images.githubusercontent.com/102650903/173249799-ca1b1bee-7297-4752-aadf-5ec90b2d34a4.png)
+해당 패턴을 찾으면 쉽게 풀이가능
+* yellow 타일이 정사각형 (n x n 꼴)이 최대이며, 가로가 길든 세로가 길든 눕히면 똑같기 때문에 무시가능함
+* yellow 타일이 가질 수 있는 모양의 경우의 수는 1줄 ~ M줄 까지임
 
-**계산식**
+**풀이 예시** 
+---
+yellow 타일의 개수가 24개의 경우 
 
-(종류1 개수 + 1) * (종류2 개수 + 1) * .... -1 = 답
+1줄 : 24개씩
 
-1. 1을 더하고 곱하는 이유 : 해당 부위의 옷을 착용안하는 경우도 있기때문
-2. 마지막에 1 빼는 이유 : 옷을 전혀 입지 않은 경우를 배제함
+2줄 : 12개씩
 
-**새로 배운 내용**
-------------------------
+3줄 : 8개씩
 
-for key, value in clothes_dict.items():
+4줄 : 6개씩
 
-.items()를 사용하여 딕셔너리에 있는 key,value값 모두 접근가능!
+5줄 : 정수로 나누어 떨어지지 않음 (pass) -> brown 타일이 1겹일 수 없음
 
- 
- 
+6줄 이상 : 같은 모양이기 때문에 의미없음 (4줄로 6개씩이나 6줄로 4개씩이나 같은 모양임)
+
+---
+yellow 타일의 개수가 15개의 경우 
+
+1줄 : 15개씩
+
+2줄 : pass
+
+3줄 : 5개씩
+
+4줄 : pass
+
+5줄 이상 : 의미없음
+
+각각 경우의 brown 타일의 개수를 개산하고 주어진 값과 맞으면 반환
+
+
+
+
+
+
 
 
