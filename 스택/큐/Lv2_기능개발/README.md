@@ -74,7 +74,14 @@ def solution(progresses, speeds):
     return answer
 ```
 
-queue를 사용하는 
- 
+queue를 사용하는 단순 구현문제
 
+
+**deque 라이브러리**
+--------------
+
+from collections import deque   : 라이브러리 호출
+A = deque()                     : 큐 선언
+A.popleft()                     : 가장 왼쪽의 요소 pop
+A.append(a)                     : 요소 추가 (가장 오른쪽으로)
 
