@@ -1,40 +1,30 @@
-[문제링크](https://programmers.co.kr/learn/courses/30/lessons/42578)
+[문제링크](https://programmers.co.kr/learn/courses/30/lessons/42586)
 
 # 문제 설명
 
-스파이들은 매일 다른 옷을 조합하여 입어 자신을 위장합니다.
+프로그래머스 팀에서는 기능 개선 작업을 수행 중입니다. 각 기능은 진도가 100%일 때 서비스에 반영할 수 있습니다.
 
-예를 들어 스파이가 가진 옷이 아래와 같고 오늘 스파이가 동그란 안경, 긴 코트, 파란색 티셔츠를 입었다면 다음날은 청바지를 추가로 입거나 동그란 안경 대신 검정 선글라스를 착용하거나 해야 합니다.
+또, 각 기능의 개발속도는 모두 다르기 때문에 뒤에 있는 기능이 앞에 있는 기능보다 먼저 개발될 수 있고, 이때 뒤에 있는 기능은 앞에 있는 기능이 배포될 때 함께 배포됩니다.
 
-종류 |이름
----|---|
-얼굴 | 동그란 안경, 검정 선글라스
-상의 |	파란색 티셔츠
-하의 |	청바지
-겉옷 | 긴 코트
-
-스파이가 가진 의상들이 담긴 2차원 배열 clothes가 주어질 때 서로 다른 옷의 조합의 수를 return 하도록 solution 함수를 작성해주세요.
-
-
+먼저 배포되어야 하는 순서대로 작업의 진도가 적힌 정수 배열 progresses와 각 작업의 개발 속도가 적힌 정수 배열 speeds가 주어질 때 각 배포마다 몇 개의 기능이 배포되는지를 return 하도록 solution 함수를 완성하세요.
 
 **제한사항**
 ---------
 
-* clothes의 각 행은 [의상의 이름, 의상의 종류]로 이루어져 있습니다.
-* 스파이가 가진 의상의 수는 1개 이상 30개 이하입니다.
-* 같은 이름을 가진 의상은 존재하지 않습니다.
-* clothes의 모든 원소는 문자열로 이루어져 있습니다.
-* 모든 문자열의 길이는 1 이상 20 이하인 자연수이고 알파벳 소문자 또는 '_' 로만 이루어져 있습니다.
-* 스파이는 하루에 최소 한 개의 의상은 입습니다.
+ * 작업의 개수(progresses, speeds배열의 길이)는 100개 이하입니다.
+ * 작업 진도는 100 미만의 자연수입니다.
+ * 작업 속도는 100 이하의 자연수입니다.
+ * 배포는 하루에 한 번만 할 수 있으며, 하루의 끝에 이루어진다고 가정합니다. 예를 들어 진도율이 95%인 작업의 개발 속도가 하루에 4%라면 배포는 2일 뒤에 이루어집니다.
 
 
 
 **입출력 예**
 -------------
-clothes	| return
----|---
-[["yellowhat", "headgear"], ["bluesunglasses", "eyewear"], ["green_turban", "headgear"]]	| 5
-[["crowmask", "face"], ["bluesunglasses", "face"], ["smoky_makeup", "face"]] | 3
+
+progresses	| speeds	| return
+---|---|---
+[93, 30, 55]	| [1, 30, 5]	| [2, 1]
+[95, 90, 99, 99, 80, 99]	| [1, 1, 1, 1, 1, 1]	| [1, 3, 2]
 
 
 
@@ -42,69 +32,56 @@ clothes	| return
 **입출력 예 설명**
 --------------
 
-예제 #1
+입출력 예 #1
+첫 번째 기능은 93% 완료되어 있고 하루에 1%씩 작업이 가능하므로 7일간 작업 후 배포가 가능합니다.
+두 번째 기능은 30%가 완료되어 있고 하루에 30%씩 작업이 가능하므로 3일간 작업 후 배포가 가능합니다. 하지만 이전 첫 번째 기능이 아직 완성된 상태가 아니기 때문에 첫 번째 기능이 배포되는 7일째 배포됩니다.
+세 번째 기능은 55%가 완료되어 있고 하루에 5%씩 작업이 가능하므로 9일간 작업 후 배포가 가능합니다.
 
-headgear에 해당하는 의상이 yellow_hat, green_turban이고 eyewear에 해당하는 의상이 blue_sunglasses이므로 아래와 같이 5개의 조합이 가능합니다.
+따라서 7일째에 2개의 기능, 9일째에 1개의 기능이 배포됩니다.
 
-    1. yellow_hat
-    2. blue_sunglasses
-    3. green_turban
-    4. yellow_hat + blue_sunglasses
-    5. green_turban + blue_sunglasses 
+입출력 예 #2
+모든 기능이 하루에 1%씩 작업이 가능하므로, 작업이 끝나기까지 남은 일수는 각각 5일, 10일, 1일, 1일, 20일, 1일입니다. 어떤 기능이 먼저 완성되었더라도 앞에 있는 모든 기능이 완성되지 않으면 배포가 불가능합니다.
 
-예제 #2
-
-face에 해당하는 의상이 crow_mask, blue_sunglasses, smoky_makeup이므로 아래와 같이 3개의 조합이 가능합니다.
-
-    1. crow_mask
-    2. blue_sunglasses
-    3. smoky_makeup
+따라서 5일째에 1개의 기능, 10일째에 3개의 기능, 20일째에 2개의 기능이 배포됩니다.
 
 
 # 풀이
 ```python
-def solution(clothes):
-    answer = 1
-    
-    clothes_dict = {}
-    # dict으로 정리
-    for i in range(len(clothes)):
-        key = clothes[i][1] # 옷의 분류
-        value = clothes[i][0] # 명칭
-        if(key in clothes_dict): 
-            clothes_dict[key] += 1
+from collections import deque
+
+def solution(progresses, speeds):
+    answer = []
+    sch = deque() # 필요 작업일자 담은 큐 생성
+    for i in range(len(progresses)):
+        dday = (100 - progresses[i]) / speeds[i] # 필요한 day
+        if(dday % 1 == 0.0):
+            sch.append(int(dday))
         else:
-            clothes_dict[key] = 1
+            sch.append(int(dday+1))
     
-    print(clothes_dict)
-    
-    # (종류1 개수 + 1) * (종류2 개수 + 1) * .... -1 = 답
-    for key, value in clothes_dict.items():
-        answer *= (value+1)
-    
-    return answer-1
+    while(len(sch) != 0): # 큐 모두 소모까지 반복
+        count = 0 # 다음 배포까지 작업완료되는 작업 수 
+        temp = sch[0] # 현재 가장 높은 우선순위 작업의 남은 작업일자
+        for i in range(len(sch)): 
+            if temp >= sch[i]:
+                count += 1
+            else:
+                break
+        answer.append(count)
+        for i in range(count):
+            sch.popleft()
+                
+    return answer
 ```
-        
- dict 형태로 입력값을 정리하고 경우의 수를 최종적으로 계산하면 되는 간단한 문제
 
-**dict으로 정리한 결과**
-![image](https://user-images.githubusercontent.com/102650903/173249799-ca1b1bee-7297-4752-aadf-5ec90b2d34a4.png)
+queue를 사용하는 단순 구현문제
 
-**계산식**
 
-(종류1 개수 + 1) * (종류2 개수 + 1) * .... -1 = 답
+**deque 라이브러리**
+--------------
 
-1. 1을 더하고 곱하는 이유 : 해당 부위의 옷을 착용안하는 경우도 있기때문
-2. 마지막에 1 빼는 이유 : 옷을 전혀 입지 않은 경우를 배제함
-
-**새로 배운 내용**
-------------------------
-
-for key, value in clothes_dict.items():
-
-.items()를 사용하여 딕셔너리에 있는 key,value값 모두 접근가능!
-
- 
- 
-
+from collections import deque   : 라이브러리 호출
+A = deque()                     : 큐 선언
+A.popleft()                     : 가장 왼쪽의 요소 pop
+A.append(a)                     : 요소 추가 (가장 오른쪽으로)
 
