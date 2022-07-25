@@ -1,87 +1,58 @@
-[문제링크](https://programmers.co.kr/learn/courses/30/lessons/42586)
+[문제링크](https://school.programmers.co.kr/learn/courses/30/lessons/42747)
 
 # 문제 설명
 
-프로그래머스 팀에서는 기능 개선 작업을 수행 중입니다. 각 기능은 진도가 100%일 때 서비스에 반영할 수 있습니다.
+H-Index는 과학자의 생산성과 영향력을 나타내는 지표입니다. 어느 과학자의 H-Index를 나타내는 값인 h를 구하려고 합니다. 위키백과1에 따르면, H-Index는 다음과 같이 구합니다.
 
-또, 각 기능의 개발속도는 모두 다르기 때문에 뒤에 있는 기능이 앞에 있는 기능보다 먼저 개발될 수 있고, 이때 뒤에 있는 기능은 앞에 있는 기능이 배포될 때 함께 배포됩니다.
+어떤 과학자가 발표한 논문 n편 중, h번 이상 인용된 논문이 h편 이상이고 나머지 논문이 h번 이하 인용되었다면 h의 최댓값이 이 과학자의 H-Index입니다.
 
-먼저 배포되어야 하는 순서대로 작업의 진도가 적힌 정수 배열 progresses와 각 작업의 개발 속도가 적힌 정수 배열 speeds가 주어질 때 각 배포마다 몇 개의 기능이 배포되는지를 return 하도록 solution 함수를 완성하세요.
+어떤 과학자가 발표한 논문의 인용 횟수를 담은 배열 citations가 매개변수로 주어질 때, 이 과학자의 H-Index를 return 하도록 solution 함수를 작성해주세요.
 
 **제한사항**
 ---------
 
- * 작업의 개수(progresses, speeds배열의 길이)는 100개 이하입니다.
- * 작업 진도는 100 미만의 자연수입니다.
- * 작업 속도는 100 이하의 자연수입니다.
- * 배포는 하루에 한 번만 할 수 있으며, 하루의 끝에 이루어진다고 가정합니다. 예를 들어 진도율이 95%인 작업의 개발 속도가 하루에 4%라면 배포는 2일 뒤에 이루어집니다.
+ * 과학자가 발표한 논문의 수는 1편 이상 1,000편 이하입니다.
+ * 논문별 인용 횟수는 0회 이상 10,000회 이하입니다.
 
 
 
 **입출력 예**
 -------------
 
-progresses	| speeds	| return
----|---|---
-[93, 30, 55]	| [1, 30, 5]	| [2, 1]
-[95, 90, 99, 99, 80, 99]	| [1, 1, 1, 1, 1, 1]	| [1, 3, 2]
-
+citations	| return
+---|---
+[3, 0, 6, 1, 5] | 3
 
 
 
 **입출력 예 설명**
 --------------
 
-입출력 예 #1
-첫 번째 기능은 93% 완료되어 있고 하루에 1%씩 작업이 가능하므로 7일간 작업 후 배포가 가능합니다.
-두 번째 기능은 30%가 완료되어 있고 하루에 30%씩 작업이 가능하므로 3일간 작업 후 배포가 가능합니다. 하지만 이전 첫 번째 기능이 아직 완성된 상태가 아니기 때문에 첫 번째 기능이 배포되는 7일째 배포됩니다.
-세 번째 기능은 55%가 완료되어 있고 하루에 5%씩 작업이 가능하므로 9일간 작업 후 배포가 가능합니다.
-
-따라서 7일째에 2개의 기능, 9일째에 1개의 기능이 배포됩니다.
-
-입출력 예 #2
-모든 기능이 하루에 1%씩 작업이 가능하므로, 작업이 끝나기까지 남은 일수는 각각 5일, 10일, 1일, 1일, 20일, 1일입니다. 어떤 기능이 먼저 완성되었더라도 앞에 있는 모든 기능이 완성되지 않으면 배포가 불가능합니다.
-
-따라서 5일째에 1개의 기능, 10일째에 3개의 기능, 20일째에 2개의 기능이 배포됩니다.
+이 과학자가 발표한 논문의 수는 5편이고, 그중 3편의 논문은 3회 이상 인용되었습니다. 그리고 나머지 2편의 논문은 3회 이하 인용되었기 때문에 이 과학자의 H-Index는 3입니다.
 
 
 # 풀이
 ```python
-from collections import deque
-
-def solution(progresses, speeds):
-    answer = []
-    sch = deque() # 필요 작업일자 담은 큐 생성
-    for i in range(len(progresses)):
-        dday = (100 - progresses[i]) / speeds[i] # 필요한 day
-        if(dday % 1 == 0.0):
-            sch.append(int(dday))
-        else:
-            sch.append(int(dday+1))
+def solution(citations):
+    answer = 0
+    sorted_citations = sorted(citations, reverse = True)  # 내림차순 정렬
     
-    while(len(sch) != 0): # 큐 모두 소모까지 반복
-        count = 0 # 다음 배포까지 작업완료되는 작업 수 
-        temp = sch[0] # 현재 가장 높은 우선순위 작업의 남은 작업일자
-        for i in range(len(sch)): 
-            if temp >= sch[i]:
-                count += 1
-            else:
-                break
-        answer.append(count)
-        for i in range(count):
-            sch.popleft()
-                
+    for i in range(len(sorted_citations)):
+        h = sorted_citations[i]
+        answer += 1
+        if(h >= answer):
+            pass
+        else: 
+            return answer-1
+        
     return answer
 ```
 
-queue를 사용하는 단순 구현문제
+패턴이 명시되어있음, 1레벨 수준의 쉬운문제-
 
 
-**deque 라이브러리**
+**sorted**
 --------------
+sorted_citations = sorted(citations, reverse = True) 
 
-from collections import deque   : 라이브러리 호출
-A = deque()                     : 큐 선언
-A.popleft()                     : 가장 왼쪽의 요소 pop
-A.append(a)                     : 요소 추가 (가장 오른쪽으로)
-
+list.sort()를 자주 사용하다보니 sorted() 사용할 때 종종 헷갈림. 특히 reverse = True 파라메타 부분 신경쓰자.
