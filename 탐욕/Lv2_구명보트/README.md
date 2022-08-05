@@ -65,6 +65,7 @@ def solution(people, limit):
 
 
 ** 효율성 비교 **
+------
 
 이중 반복문 사용 | 양방향 deque 사용
 ---|---
