@@ -1,7 +1,6 @@
 import sys
 
 def sol():
-    sys.stdin = open("1.txt", "r")
     map_size, remain_num = map(int,input().split())
     store_list = []
     house_list = []
@@ -19,19 +18,21 @@ def sol():
                 house_list.append([h,w])
 
     picked_store = get_comb(store_list, remain_num)
-    answer = []
+    answer = 10000
     for arr in picked_store:
-        temp1 = [] # 집 마다 최적의 치킨 거리 모음
+        totalDis = 0 # 집 마다 최적의 치킨 거리 모음
         for a in house_list: # 일반집
-            temp2 = []  # 해당 집에서 갈 수 있는 치킨 가게의 거리 모음
+            minDis = 10000
             for b in arr: # 치킨집
-                temp2.append(cal_dist(a,b))
-            temp1.append(min(temp2))
-        answer.append(sum(temp1))
+                newDis = cal_dist(a,b)
+                if(minDis > newDis):
+                    minDis = newDis
 
-    return min(answer)
-
-
+            totalDis += minDis
+        if answer > totalDis:
+            answer = totalDis
+    print(answer)
+    return answer
 
 def get_comb(arr, n):
     result = []
